@@ -116,8 +116,8 @@ h2 i {
 
 .logo {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: -50px;
+    left: -5px;
     width: 200px; /* sesuaikan ukuran */
     height: auto;
     z-index: 10;
