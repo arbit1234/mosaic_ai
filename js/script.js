@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // DOM elements
     const elements = {
-        roomUploadBox: document.getElementById('roomUploadBox'),
-        tileUploadBox: document.getElementById('tileUploadBox'),
         roomFileInput: document.getElementById('roomFileInput'),
         tileFileInput: document.getElementById('tileFileInput'),
         previewGrid: document.getElementById('previewGrid'),
@@ -38,17 +36,14 @@ document.addEventListener('DOMContentLoaded', function() {
             "The tile complements your room's lighting and dimensions well. The pattern creates a sense of space and matches the room's aesthetic.",
             "This tile selection works perfectly with your room's color scheme and lighting conditions, creating a harmonious look.",
             "The tile's texture and color bring out the best features of your room, enhancing its overall appearance."
-        ]
+        ],
+        singleImageResponse: "Only one image was uploaded. For best results, upload both a room and a tile image to see a complete 3D visualization."
     };
 
     // Event listeners
     function setupEventListeners() {
-        elements.roomUploadBox.addEventListener('click', () => elements.roomFileInput.click());
-        elements.tileUploadBox.addEventListener('click', () => elements.tileFileInput.click());
-        
         elements.roomFileInput.addEventListener('change', () => handleFileUpload('room'));
         elements.tileFileInput.addEventListener('change', () => handleFileUpload('tile'));
-        
         elements.analyzeBtn.addEventListener('click', analyzeImages);
     }
 
@@ -70,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
             previewElement.src = e.target.result;
             state[`${type}ImageUploaded`] = true;
             
-            if (state.roomImageUploaded && state.tileImageUploaded) {
+            // Show preview grid and enable analyze button if at least one image is uploaded
+            if (state.roomImageUploaded || state.tileImageUploaded) {
                 elements.previewGrid.style.display = 'grid';
                 elements.analyzeBtn.disabled = false;
             }
@@ -80,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Analyze images
     function analyzeImages() {
-        if (!state.roomImageUploaded || !state.tileImageUploaded) {
-            alert('Please upload both room and tile images first');
+        if (!state.roomImageUploaded && !state.tileImageUploaded) {
+            alert('Please upload at least one image (room or tile) to proceed');
             return;
         }
         
@@ -123,10 +119,14 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Show random AI response
-        elements.aiResponseText.textContent = messages.aiResponses[
-            Math.floor(Math.random() * messages.aiResponses.length)
-        ];
+        // Show AI response based on whether one or both images are uploaded
+        if (state.roomImageUploaded && state.tileImageUploaded) {
+            elements.aiResponseText.textContent = messages.aiResponses[
+                Math.floor(Math.random() * messages.aiResponses.length)
+            ];
+        } else {
+            elements.aiResponseText.textContent = messages.singleImageResponse;
+        }
     }
 
     // Initialize
